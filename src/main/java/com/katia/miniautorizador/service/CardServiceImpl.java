@@ -17,8 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static com.katia.miniautorizador.enums.ValidaTransacao.*;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 @Slf4j
@@ -52,28 +51,23 @@ public class CardServiceImpl implements CardService {
     @Transactional
     public Object transacao(TransacaoDto transacaoDto) {
         Card card1 = repository.findCardByNumeroCartao(transacaoDto.getNumeroCartao());
-
-        Object CARTAO_INEXISTENTE1 = getObject(transacaoDto, card1);
-        if (CARTAO_INEXISTENTE1 != null) return CARTAO_INEXISTENTE1;
-        Card novoSaldo = debitar(card1, transacaoDto);
-        repository.save(novoSaldo);
-        return ResponseEntity.ok(CREATED);
-
-    }
-
-    private static Object getObject(TransacaoDto transacaoDto, Card card1) {
-        if (card1.getNumeroCartao() == null) {
-            return ResponseEntity.unprocessableEntity().body(CARTAO_INEXISTENTE).toString();
+        if (card1 == null) {
+            return ResponseEntity.status(NOT_FOUND).body(CARTAO_INEXISTENTE);
         } else if (card1.getSaldo() < transacaoDto.getValorTransacao()) {
 
-            return ResponseEntity.unprocessableEntity().body(SALDO_INSUFICIENTE);
+            return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(SALDO_INSUFICIENTE);
 
         } else if (!Objects.equals(card1.getSenha(), transacaoDto.getSenha())) {
 
             return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(SENHA_INVALIDA);
         }
-        return null;
+        Card novoSaldo = debitar(card1, transacaoDto);
+        repository.save(novoSaldo);
+        return ResponseEntity.status(CREATED);
+
     }
+
+
 
     private Card debitar(Card card, TransacaoDto transacaoDto) {
         float valorDebto = card.getSaldo();
@@ -93,5 +87,3 @@ public class CardServiceImpl implements CardService {
 
 
 }
-
-

@@ -18,7 +18,6 @@ public class Card {
     @Column(name = "id")
     private String id;
 
-
     @Column(name = "cartao", length = 100)
     @NotEmpty(message = "{campo.cartao.obrigatorio}")
     private String numeroCartao;
