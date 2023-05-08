@@ -1,25 +1,23 @@
 package com.katia.miniautorizador.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatusCode;
+
+import java.math.BigDecimal;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class CartaoDto {
+public class TransacaoDto {
 
-    @JsonProperty
     private String numeroCartao;
-    @JsonProperty
-    private String senha;
-    @JsonProperty
-    private Double saldo;
 
-    private HttpStatusCode statusCode;
+    private String senha;
+
+    private float valorTransacao;
+
 
 }

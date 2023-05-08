@@ -1,12 +1,26 @@
 package com.katia.miniautorizador.service;
 
-import com.katia.miniautorizador.domain.dto.CartaoDto;
+import com.katia.miniautorizador.domain.dto.CriarCartaoDto;
+import com.katia.miniautorizador.domain.dto.TransacaoDto;
 import com.katia.miniautorizador.domain.entity.Card;
 
-import javax.validation.Valid;
+import java.text.ParseException;
 
 public interface CardService {
-    Card criar (@Valid Card cardDto);
-    String validarCartao(String numeroCartao);
+   /* Card criar (@Valid Card cardDto);*/
+   /* String validarCartao(String numeroCartao);*/
+
+    String retornaSaldo(String numeroCartao);
+
+    Object criarCartao(Card cartaoDto) throws ParseException;
+
+    Object transacao(TransacaoDto transacaoDto);
+
+
+
+
+
+
+
 
 }

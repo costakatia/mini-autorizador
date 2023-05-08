@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -29,7 +30,7 @@ public class Card {
     private String senha;
 
     @Column(name = "saldo", length = 100)
-    private Double saldo;
+    private float saldo;
 
 
 }
