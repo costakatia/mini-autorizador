@@ -25,11 +25,7 @@ public class MiniAutorizadorController {
     private CardService service;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation("Salva um novo cartao")
-    @ApiResponses({
-            @ApiResponse(code = 201, message = "Cliente salvo com sucesso"),
-            @ApiResponse(code = 400, message = "Erro de validação")
-    })
+    
     public String criarCartao(@RequestBody @Valid Card card) throws ParseException {
         return String.valueOf(service.criarCartao(card));
     }
