@@ -61,6 +61,7 @@ public class CardServiceImpl implements CardService {
 
             return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(SENHA_INVALIDA);
         }
+
         Card novoSaldo = debitar(card1, transacaoDto);
         repository.save(novoSaldo);
         return ResponseEntity.status(CREATED);
