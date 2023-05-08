@@ -6,6 +6,7 @@ import com.katia.miniautorizador.domain.dto.CriarCartaoDto;
 import com.katia.miniautorizador.domain.entity.Card;
 import com.katia.miniautorizador.enums.ValidaTransacao;
 import com.katia.miniautorizador.repository.Cards;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
@@ -53,6 +54,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
+    @Transactional
     public Object transacao(TransacaoDto transacaoDto){
         Card card1 = repository.findCardByNumeroCartao(transacaoDto.getNumeroCartao());
 
