@@ -11,6 +11,7 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 @Entity
 @Table(schema = "cartoes")
+@Data
 public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
