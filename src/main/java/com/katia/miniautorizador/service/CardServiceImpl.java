@@ -1,20 +1,17 @@
 package com.katia.miniautorizador.service;
 
 
-import com.katia.miniautorizador.domain.dto.TransacaoDto;
 import com.katia.miniautorizador.domain.dto.CriarCartaoDto;
+import com.katia.miniautorizador.domain.dto.TransacaoDto;
 import com.katia.miniautorizador.domain.entity.Card;
-import com.katia.miniautorizador.enums.ValidaTransacao;
 import com.katia.miniautorizador.repository.Cards;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -32,22 +29,20 @@ public class CardServiceImpl implements CardService {
     private ModelMapper modelMapper;
 
 
-
-
     @Override
     public String retornaSaldo(String numeroCartao) {
         Optional<Card> card = Optional.ofNullable(repository.findCardByNumeroCartao(numeroCartao));
-        if(card.isEmpty()){
+        if (card.isEmpty()) {
             return HttpStatus.NOT_FOUND.toString();
         }
         return String.valueOf(card.get().getSaldo());
     }
 
     @Override
-    public Object criarCartao(Card card){
-       Card card1 = repository.findCardByNumeroCartao(card.getNumeroCartao())  ;
+    public Object criarCartao(Card card) {
+        Card card1 = repository.findCardByNumeroCartao(card.getNumeroCartao());
 
-        if(card1 != null ){
+        if (card1 != null) {
             return UNPROCESSABLE_ENTITY;
         }
         return convertToDto(repository.insert(card));
@@ -55,26 +50,32 @@ public class CardServiceImpl implements CardService {
 
     @Override
     @Transactional
-    public Object transacao(TransacaoDto transacaoDto){
+    public Object transacao(TransacaoDto transacaoDto) {
         Card card1 = repository.findCardByNumeroCartao(transacaoDto.getNumeroCartao());
 
-        if(card1.getNumeroCartao() == null){
-            return ResponseEntity.unprocessableEntity().body(CARTAO_INEXISTENTE).toString();
-        } else if (card1.getSaldo() < transacaoDto.getValorTransacao()) {
-
-            return ResponseEntity.unprocessableEntity().body(SALDO_INSUFICIENTE);
-
-        }else if(!Objects.equals(card1.getSenha(), transacaoDto.getSenha())){
-
-            return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(SENHA_INVALIDA);
-        }
-        Card novoSaldo = debitar(card1,transacaoDto);
+        Object CARTAO_INEXISTENTE1 = getObject(transacaoDto, card1);
+        if (CARTAO_INEXISTENTE1 != null) return CARTAO_INEXISTENTE1;
+        Card novoSaldo = debitar(card1, transacaoDto);
         repository.save(novoSaldo);
         return ResponseEntity.ok(CREATED);
 
     }
 
-    private Card debitar(Card card , TransacaoDto transacaoDto) {
+    private static Object getObject(TransacaoDto transacaoDto, Card card1) {
+        if (card1.getNumeroCartao() == null) {
+            return ResponseEntity.unprocessableEntity().body(CARTAO_INEXISTENTE).toString();
+        } else if (card1.getSaldo() < transacaoDto.getValorTransacao()) {
+
+            return ResponseEntity.unprocessableEntity().body(SALDO_INSUFICIENTE);
+
+        } else if (!Objects.equals(card1.getSenha(), transacaoDto.getSenha())) {
+
+            return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(SENHA_INVALIDA);
+        }
+        return null;
+    }
+
+    private Card debitar(Card card, TransacaoDto transacaoDto) {
         float valorDebto = card.getSaldo();
         float v = valorDebto - transacaoDto.getValorTransacao();
         card.setSaldo(v);
@@ -82,27 +83,13 @@ public class CardServiceImpl implements CardService {
     }
 
 
-
-    private CriarCartaoDto convertToDto(Card card){
+    private CriarCartaoDto convertToDto(Card card) {
         CriarCartaoDto cardDto = modelMapper.map(card, CriarCartaoDto.class);
         cardDto.setNumeroCartao(card.getNumeroCartao());
         cardDto.setSenha(card.getSenha());
         return cardDto;
 
     }
-
-
-
-   /* @Override
-    public String validarCartao(String numeroCartao) {
-        Card numerCartao = repository.findCardByNumeroCartao(numeroCartao);
-        if (numerCartao == null) {
-            return HttpStatus.NOT_FOUND.toString();
-        }
-
-        return numerCartao.getSaldo().toString();
-    }*/
-
 
 
 }

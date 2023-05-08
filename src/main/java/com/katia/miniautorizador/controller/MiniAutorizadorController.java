@@ -1,7 +1,6 @@
 package com.katia.miniautorizador.controller;
 
 
-import com.katia.miniautorizador.domain.dto.CriarCartaoDto;
 import com.katia.miniautorizador.domain.dto.TransacaoDto;
 import com.katia.miniautorizador.domain.entity.Card;
 import com.katia.miniautorizador.service.CardService;
@@ -11,7 +10,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.repository.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
